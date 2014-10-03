@@ -35,16 +35,16 @@ leftKeyCode = 37 -- left arrow
 
 groundHeight = 40 -- px
 
-gravity = 0.3 -- px / frame^2
+gravity = 0.2 -- px / frame^2
 
 jumpCoefficient = 0.4
-minJumpHeight = 4 -- px / frame
-maxMoveSpeed = 4 -- px / frame
+minJumpHeight = 3 -- px / frame
+maxMoveSpeed = 2.5 -- px / frame
 
 groundAccel = 0.06 -- px / frame^2
 airAccel = 0.04 -- px / frame^2
 
-groundFriction = 0.15 -- px / frame^2
+groundFriction = 0.1 -- px / frame^2
 airFriction = 0.02 -- px / frame^2
 
 
