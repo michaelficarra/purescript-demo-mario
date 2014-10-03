@@ -1,0 +1,54 @@
+module Mario.DOM where
+
+import Control.Monad.Eff
+
+import DOM (DOM(..), Node(..))
+
+type Dimensions = { width :: Number, height :: Number }
+type Coordinate = { x :: Number, y :: Number }
+
+foreign import getViewportDimensions """
+  function getViewportDimensions() {
+    return {
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight
+    };
+  }
+  """ :: forall eff. Eff (dom :: DOM | eff) Dimensions
+
+foreign import updatePosition """
+  function updatePosition(node) {
+    return function(coord) {
+      return function() {
+        node.style.left = coord.x + 'px';
+        node.style.bottom = coord.y + 'px';
+      };
+    };
+  }
+  """ :: Node -> Coordinate -> forall eff. Eff (dom :: DOM | eff) Unit
+
+foreign import updateSprite """
+  function updateSprite(node) {
+    return function(url) {
+      return function() {
+        if (node.src !== url) node.src = url;
+      };
+    };
+  }
+  """ :: Node -> String -> forall eff. Eff (dom :: DOM | eff) Unit
+
+foreign import onDOMContentLoaded """
+  function onDOMContentLoaded(action) {
+    if (document.readyState === 'interactive') {
+      action();
+    } else {
+      document.addEventListener('DOMContentLoaded', action);
+    }
+    return function() { return {}; };
+  }
+  """ :: forall eff a. Eff (dom :: DOM | eff) a -> Eff (eff) Unit
+
+foreign import getMario
+  "function getMario() { return document.getElementById('mario'); }"
+  :: forall eff. Eff (dom :: DOM | eff) Node
+

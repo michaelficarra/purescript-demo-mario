@@ -1,0 +1,33 @@
+{
+  "name": "purescript-demo-mario",
+  "version": "0.0.0",
+  "description": "implementation of Elm's Mario demo in PureScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/michaelficarra/purescript-demo-mario"
+  },
+  "keywords": [
+    "purescript",
+    "demo",
+    "mario",
+    "example",
+    "sample",
+    "frp",
+    "elm"
+  ],
+  "author": "Michael Ficarra",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/michaelficarra/purescript-demo-mario/issues"
+  },
+  "homepage": "https://github.com/michaelficarra/purescript-demo-mario",
+  "devDependencies": {
+    "bower": "^1.3.12",
+    "istanbul": "^0.3.2",
+    "mocha": "^1.21.4"
+  }
+}

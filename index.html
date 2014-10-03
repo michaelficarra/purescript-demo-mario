@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>purescript-demo-mario</title>
+    <script src="lib/Mario.js"></script>
+    <style>
+      html, body {
+        padding: 0;
+        margin: 0;
+        background-color: rgb(174, 238, 238);
+      }
+      #ground {
+        position: absolute;
+        background-color: rgb(74, 163, 41);
+        width: 100%;
+        height: 8%;
+        bottom: 0;
+      }
+      #mario {
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="mario" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" alt="mario" />
+    <div id="ground"></div>
+  </body>
+</html>

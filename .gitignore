@@ -1,0 +1,6 @@
+.psci_modules
+bower_components
+built-tests
+coverage
+lib
+node_modules
