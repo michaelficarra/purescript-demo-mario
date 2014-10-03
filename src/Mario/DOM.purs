@@ -4,17 +4,7 @@ import Control.Monad.Eff
 
 import DOM (DOM(..), Node(..))
 
-type Dimensions = { width :: Number, height :: Number }
 type Coordinate = { x :: Number, y :: Number }
-
-foreign import getViewportDimensions """
-  function getViewportDimensions() {
-    return {
-      width: document.documentElement.clientWidth,
-      height: document.documentElement.clientHeight
-    };
-  }
-  """ :: forall eff. Eff (dom :: DOM | eff) Dimensions
 
 foreign import updatePosition """
   function updatePosition(node) {

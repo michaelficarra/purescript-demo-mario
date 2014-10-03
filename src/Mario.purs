@@ -33,7 +33,7 @@ jumpKeyCode = 38 -- up arrow
 rightKeyCode = 39 -- right arrow
 leftKeyCode = 37 -- left arrow
 
-groundHeight = 0.08 -- * viewport height
+groundHeight = 40 -- px
 
 gravity = 0.3 -- px / frame^2
 
@@ -107,8 +107,6 @@ marioLogic inputs = velocity <<< applyGravity
 
 main = onDOMContentLoaded do
   marioElement <- getMario
-  viewportDimensions <- getViewportDimensions
-  let groundHeightPx = groundHeight * viewportDimensions.height
   jumpKey <- keyPressed jumpKeyCode
   rightKey <- keyPressed rightKeyCode
   leftKey <- keyPressed leftKeyCode
@@ -116,4 +114,4 @@ main = onDOMContentLoaded do
   frames <- animationFrame
   runSignal $ foldp marioLogic initialState (sampleOn frames inputs) ~> \gameState -> do
     updateSprite marioElement $ marioSpriteUrl (currentActivity gameState) gameState.dir
-    updatePosition marioElement (offsetGround groundHeightPx {x: gameState.x, y: gameState.y})
+    updatePosition marioElement (offsetGround groundHeight {x: gameState.x, y: gameState.y})
