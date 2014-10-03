@@ -26,6 +26,8 @@
 
     applyGravity :: Mario.GameState -> Mario.GameState
 
+    coefficientOfJump :: Number
+
     currentActivity :: Mario.GameState -> Mario.Verb
 
     friction :: Mario.GameState -> Number
@@ -46,17 +48,19 @@
 
     jumpKeyCode :: Number
 
-    jumpSpeed :: Number
+    jumpSpeed :: Number -> Number
 
     leftKeyCode :: Number
 
-    main :: forall t1838. Control.Monad.Eff.Eff t1838 Prelude.Unit
+    main :: forall t1843. Control.Monad.Eff.Eff t1843 Prelude.Unit
 
     marioLogic :: Mario.Inputs -> Mario.GameState -> Mario.GameState
 
     marioSpriteUrl :: Mario.Verb -> Mario.Direction -> String
 
     maxMoveSpeed :: Number
+
+    minJumpHeight :: Number
 
     mkInputs :: Boolean -> Boolean -> Boolean -> Mario.Inputs
 

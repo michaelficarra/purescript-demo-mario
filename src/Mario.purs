@@ -8,9 +8,9 @@ import Mario.DOM
 
 
 initialState :: GameState
-initialState = {
+initialState = jump true {
     x: -40, y: 0,
-    dx: maxMoveSpeed, dy: jumpSpeed,
+    dx: maxMoveSpeed, dy: 0,
     dir: Right
   }
 
@@ -37,7 +37,8 @@ groundHeight = 40 -- px
 
 gravity = 0.3 -- px / frame^2
 
-jumpSpeed = 6 -- px / frame
+coefficientOfJump = 1
+minJumpHeight = 4
 maxMoveSpeed = 4 -- px / frame
 
 groundAccel = 0.06 -- px / frame^2
@@ -80,8 +81,11 @@ applyGravity s =
   then s { y = 0, dy = 0 }
   else s { y = s.y + s.dy, dy = s.dy - gravity }
 
+jumpSpeed :: Number -> Number
+jumpSpeed dx = minJumpHeight + coefficientOfJump * abs dx
+
 jump :: Boolean -> GameState -> GameState
-jump true s | not (isAirborne s) = s { dy = jumpSpeed }
+jump true s | not (isAirborne s) = s { dy = jumpSpeed s.dx }
 jump _ s = s
 
 walk :: Boolean -> Boolean -> GameState -> GameState
