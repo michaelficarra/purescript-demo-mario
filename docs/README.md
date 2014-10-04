@@ -26,8 +26,6 @@
 
     applyGravity :: Mario.GameState -> Mario.GameState
 
-    coefficientOfJump :: Number
-
     currentActivity :: Mario.GameState -> Mario.Verb
 
     friction :: Mario.GameState -> Number
@@ -45,6 +43,8 @@
     isAirborne :: Mario.GameState -> Boolean
 
     jump :: Boolean -> Mario.GameState -> Mario.GameState
+
+    jumpCoefficient :: Number
 
     jumpKeyCode :: Number
 

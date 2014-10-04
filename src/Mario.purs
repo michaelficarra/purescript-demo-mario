@@ -37,8 +37,8 @@ groundHeight = 40 -- px
 
 gravity = 0.3 -- px / frame^2
 
-coefficientOfJump = 1
-minJumpHeight = 4
+jumpCoefficient = 0.4
+minJumpHeight = 4 -- px / frame
 maxMoveSpeed = 4 -- px / frame
 
 groundAccel = 0.06 -- px / frame^2
@@ -82,7 +82,7 @@ applyGravity s =
   else s { y = s.y + s.dy, dy = s.dy - gravity }
 
 jumpSpeed :: Number -> Number
-jumpSpeed dx = minJumpHeight + coefficientOfJump * abs dx
+jumpSpeed dx = minJumpHeight + jumpCoefficient * abs dx
 
 jump :: Boolean -> GameState -> GameState
 jump true s | not (isAirborne s) = s { dy = jumpSpeed s.dx }
