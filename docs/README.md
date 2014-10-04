@@ -52,7 +52,7 @@
 
     leftKeyCode :: Number
 
-    main :: forall t1843. Control.Monad.Eff.Eff t1843 Prelude.Unit
+    main :: forall t1847. Control.Monad.Eff.Eff t1847 Prelude.Unit
 
     marioLogic :: Mario.Inputs -> Mario.GameState -> Mario.GameState
 

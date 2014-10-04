@@ -86,6 +86,7 @@ jumpSpeed dx = minJumpHeight + jumpCoefficient * abs dx
 
 jump :: Boolean -> GameState -> GameState
 jump true s | not (isAirborne s) = s { dy = jumpSpeed s.dx }
+jump false s | isAirborne s && s.dy > 0 = s { dy = s.dy - gravity }
 jump _ s = s
 
 walk :: Boolean -> Boolean -> GameState -> GameState
