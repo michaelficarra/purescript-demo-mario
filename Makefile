@@ -23,6 +23,7 @@ MOCHA_OPTS = --inline-diffs --check-leaks -R dot
 lib/$(MODULE).js: bower_components src/$(MODULE).purs
 	@mkdir -p '$(@D)'
 	psc --verbose-errors \
+	  --module $(MODULE) \
 	  --main $(MODULE) \
 	  ${BOWER_DEPS} $(SRC) \
 	  > lib/$(MODULE).js
@@ -32,9 +33,9 @@ lib/$(MODULE).js: bower_components src/$(MODULE).purs
 lib/$(MODULE).externs.purs: bower_components src/$(MODULE).purs
 	@mkdir -p '$(@D)'
 	psc --verbose-errors \
-	  -m $(MODULE) \
+	  --module $(MODULE) \
 	  --codegen $(MODULE) \
-	  -e lib/$(MODULE).externs.purs \
+	  --externs lib/$(MODULE).externs.purs \
 	  ${BOWER_DEPS} $(SRC) \
 	  > /dev/null
 
