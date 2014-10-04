@@ -26,6 +26,8 @@
 
     applyGravity :: Mario.GameState -> Mario.GameState
 
+    combineKeyPresses :: [Signal.Signal Boolean] -> Signal.Signal Boolean
+
     currentActivity :: Mario.GameState -> Mario.Verb
 
     friction :: Mario.GameState -> Number
@@ -46,13 +48,13 @@
 
     jumpCoefficient :: Number
 
-    jumpKeyCode :: Number
+    jumpKeyCodes :: [Number]
 
     jumpSpeed :: Number -> Number
 
-    leftKeyCode :: Number
+    leftKeyCodes :: [Number]
 
-    main :: forall t1847. Control.Monad.Eff.Eff t1847 Prelude.Unit
+    main :: forall t4550. Control.Monad.Eff.Eff t4550 Prelude.Unit
 
     marioLogic :: Mario.Inputs -> Mario.GameState -> Mario.GameState
 
@@ -66,7 +68,7 @@
 
     offsetGround :: Number -> Mario.DOM.Coordinate -> Mario.DOM.Coordinate
 
-    rightKeyCode :: Number
+    rightKeyCodes :: [Number]
 
     velocity :: Mario.GameState -> Mario.GameState
 

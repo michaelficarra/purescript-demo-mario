@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "purescript-dom": "*",
+    "purescript-foldable-traversable": "*",
     "purescript-math": "*",
     "purescript-signal": "git@github.com:bodil/purescript-signal.git"
   },

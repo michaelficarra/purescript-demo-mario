@@ -1,6 +1,6 @@
 module Mario.DOM where
 
-import Control.Monad.Eff
+import Control.Monad.Eff (Eff(..))
 
 import DOM (DOM(..), Node(..))
 

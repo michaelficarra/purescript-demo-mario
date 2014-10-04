@@ -1,7 +1,9 @@
 module Mario where
 
+import Data.Traversable (sequence)
+import Data.Foldable (foldl)
 import Math (abs, max, min)
-import Signal ((~>), foldp, runSignal, sampleOn)
+import Signal ((~>), constant, foldp, merge, runSignal, sampleOn, Signal(..))
 import Signal.DOM (animationFrame, keyPressed)
 
 import Mario.DOM
@@ -29,9 +31,9 @@ type GameState = { x :: Number, y :: Number, dx :: Number, dy :: Number, dir :: 
 type Inputs = { right :: Boolean, left :: Boolean, jump :: Boolean }
 
 
-jumpKeyCode = 38 -- up arrow
-rightKeyCode = 39 -- right arrow
-leftKeyCode = 37 -- left arrow
+leftKeyCodes = [37, 65] -- left arrow, a
+rightKeyCodes = [39, 68] -- right arrow, d
+jumpKeyCodes = [38, 87] -- up arrow, w
 
 groundHeight = 40 -- px
 
@@ -53,6 +55,9 @@ marioSpriteUrl verb dir = "http://elm-lang.org/imgs/mario/" ++ show verb ++ "/" 
 
 offsetGround :: Number -> Coordinate -> Coordinate
 offsetGround amount pos = pos { y = pos.y + amount - 4 } -- 4 pixels for image offset
+
+combineKeyPresses :: [Signal Boolean] -> Signal Boolean
+combineKeyPresses = foldl merge (constant false)
 
 mkInputs :: Boolean -> Boolean -> Boolean -> Inputs
 mkInputs l r j = { left: l, right: r, jump: j }
@@ -112,10 +117,10 @@ marioLogic inputs = velocity <<< applyGravity
 
 main = onDOMContentLoaded do
   marioElement <- getMario
-  jumpKey <- keyPressed jumpKeyCode
-  rightKey <- keyPressed rightKeyCode
-  leftKey <- keyPressed leftKeyCode
-  let inputs = mkInputs <$> leftKey <*> rightKey <*> jumpKey
+  leftInputs <- combineKeyPresses <$> sequence (keyPressed <$> leftKeyCodes)
+  rightInputs <- combineKeyPresses <$> sequence (keyPressed <$> rightKeyCodes)
+  jumpInputs <- combineKeyPresses <$> sequence (keyPressed <$> jumpKeyCodes)
+  let inputs = mkInputs <$> leftInputs <*> rightInputs <*> jumpInputs
   frames <- animationFrame
   runSignal $ foldp marioLogic initialState (sampleOn frames inputs) ~> \gameState -> do
     updateSprite marioElement $ marioSpriteUrl (currentActivity gameState) gameState.dir
