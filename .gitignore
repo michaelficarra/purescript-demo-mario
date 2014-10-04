@@ -1,6 +1,13 @@
 .psci_modules
+Makefile
+README.md
+bower.json
 bower_components
 built-tests
 coverage
-lib
+demo.gif
+docs
+lib/Mario.externs.purs
 node_modules
+package.json
+src
