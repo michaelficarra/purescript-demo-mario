@@ -54,7 +54,7 @@
 
     leftKeyCodes :: [Number]
 
-    main :: forall t4550. Control.Monad.Eff.Eff t4550 Prelude.Unit
+    main :: forall t4697. Control.Monad.Eff.Eff t4697 Prelude.Unit
 
     marioLogic :: Mario.Inputs -> Mario.GameState -> Mario.GameState
 
