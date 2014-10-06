@@ -20,7 +20,7 @@ ISTANBUL = node_modules/.bin/istanbul
 MOCHA = node_modules/.bin/_mocha
 MOCHA_OPTS = --inline-diffs --check-leaks -R dot
 
-lib/$(MODULE).js: bower_components src/$(MODULE).purs
+lib/$(MODULE).js: bower_components $(SRC)
 	@mkdir -p '$(@D)'
 	psc --verbose-errors \
 	  --module $(MODULE) \
@@ -30,7 +30,7 @@ lib/$(MODULE).js: bower_components src/$(MODULE).purs
 
 .PHONY: default all build externs deps doc clean test build-tests
 
-lib/$(MODULE).externs.purs: bower_components src/$(MODULE).purs
+lib/$(MODULE).externs.purs: bower_components $(SRC)
 	@mkdir -p '$(@D)'
 	psc --verbose-errors \
 	  --module $(MODULE) \
