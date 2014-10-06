@@ -51,7 +51,7 @@ airFriction = 0.02 -- px / frame^2
 
 
 marioSpriteUrl :: Verb -> Direction -> String
-marioSpriteUrl verb dir = "http://elm-lang.org/imgs/mario/" ++ show verb ++ "/" ++ show dir ++ ".gif"
+marioSpriteUrl verb dir = "resources/mario/" ++ show verb ++ "/" ++ show dir ++ ".gif"
 
 offsetGround :: Number -> Coordinate -> Coordinate
 offsetGround amount pos = pos { y = pos.y + amount - 4 } -- 4 pixels for image offset

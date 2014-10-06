@@ -19,9 +19,11 @@ foreign import updatePosition """
 
 foreign import updateSprite """
   function updateSprite(node) {
+    var a = document.createElement('a');
     return function(url) {
       return function() {
-        if (node.src !== url) node.src = url;
+        a.href = url;
+        if (node.src !== a.href) node.src = url;
       };
     };
   }
