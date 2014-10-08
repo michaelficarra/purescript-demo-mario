@@ -20,9 +20,49 @@
       #mario {
         position: absolute;
       }
+      /* inspired by http://unindented.org/articles/github-ribbon-using-css-transforms/ */
+      .ribbon {
+        position: absolute;
+        top: 25px;
+        background-color: #a00;
+        white-space: nowrap;
+        -webkit-box-shadow: 0 0 10px #888;
+           -moz-box-shadow: 0 0 10px #888;
+                box-shadow: 0 0 10px #888;
+      }
+      .ribbon.right {
+        right: -55px;
+        -webkit-transform: rotate(32deg);
+           -moz-transform: rotate(32deg);
+            -ms-transform: rotate(32deg);
+             -o-transform: rotate(32deg);
+                transform: rotate(32deg);
+      }
+      .ribbon.left {
+        left: -55px;
+        -webkit-transform: rotate(-32deg);
+           -moz-transform: rotate(-32deg);
+            -ms-transform: rotate(-32deg);
+             -o-transform: rotate(-32deg);
+                transform: rotate(-32deg);
+      }
+      .ribbon a {
+        border: 1px solid #faa;
+        color: #fff;
+        display: block;
+        font: bold 81.25% 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        margin: 1px 0;
+        padding: 7px 60px;
+        text-align: center;
+        text-decoration: none;
+        text-shadow: 0 0 5px #444;
+      }
     </style>
   </head>
   <body>
+    <div class="ribbon left">
+      <a href="https://github.com/michaelficarra/purescript-demo-mario">Fork me on GitHub</a>
+    </div>
     <img id="mario" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" alt="mario" />
     <div id="ground"></div>
   </body>
