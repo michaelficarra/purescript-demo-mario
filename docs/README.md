@@ -54,7 +54,7 @@
 
     leftKeyCodes :: [Number]
 
-    main :: forall t4697. Control.Monad.Eff.Eff t4697 Prelude.Unit
+    main :: forall t5017. Control.Monad.Eff.Eff (timer :: Control.Reactive.Timer.Timer | t5017) Prelude.Unit
 
     marioLogic :: Mario.Inputs -> Mario.GameState -> Mario.GameState
 

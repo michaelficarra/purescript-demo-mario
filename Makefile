@@ -9,48 +9,50 @@ externs: lib/$(MODULE).externs.purs
 deps: node_modules bower_components
 doc: docs/README.md
 
-
 BOWER_DEPS = $(shell find bower_components/purescript-*/src -name '*.purs' -type f | sort)
 SRC = $(shell find src -name '*.purs' -type f | sort)
-TESTS = $([ -d test ] && shell find test -name '*.purs' -type f | sort)
+TESTS = $(shell [ -d test ] && find test -name '*.purs' -type f | sort)
 TESTSOUT = $(TESTS:test/%.purs=built-tests/%.js)
 
 BOWER = node_modules/.bin/bower
 ISTANBUL = node_modules/.bin/istanbul
 MOCHA = node_modules/.bin/_mocha
-MOCHA_OPTS = --inline-diffs --check-leaks -R dot
+MOCHA_OPTS = --inline-diffs --check-leaks --reporter dot
+NPM = $(shell command -v npm || { echo "npm not found."; exit 1; })
+PSC = $(shell command -v psc || { echo "PureScript compiler (psc) not found."; exit 1; })
+PSCDOCS = $(shell command -v psc-docs || command -v docgen)
 
 lib/$(MODULE).js: bower_components $(SRC)
 	@mkdir -p '$(@D)'
-	psc --verbose-errors \
+	$(PSC) --verbose-errors \
 	  --module $(MODULE) \
 	  --main $(MODULE) \
-	  ${BOWER_DEPS} $(SRC) \
+	  $(BOWER_DEPS) $(SRC) \
 	  > lib/$(MODULE).js
 
 .PHONY: default all build externs deps doc clean test build-tests
 
 lib/$(MODULE).externs.purs: bower_components $(SRC)
 	@mkdir -p '$(@D)'
-	psc --verbose-errors \
+	$(PSC) --verbose-errors \
 	  --module $(MODULE) \
 	  --codegen $(MODULE) \
 	  --externs lib/$(MODULE).externs.purs \
-	  ${BOWER_DEPS} $(SRC) \
+	  $(BOWER_DEPS) $(SRC) \
 	  > /dev/null
 
 docs/README.md: lib/$(MODULE).externs.purs
 	@mkdir -p '$(@D)'
-	docgen lib/$(MODULE).externs.purs > docs/README.md
+	$(PSCDOCS) lib/$(MODULE).externs.purs >'$@'
 
-built-tests/%.js: bower_components test/%.purs
+built-tests/%.js: test/%.purs bower_components
 	@mkdir -p '$(@D)'
-	psc --verbose-errors -m Tests \
+	$(PSC) --verbose-errors --module Tests \
 	  $(BOWER_DEPS) '$<' \
 	  >'$@'
 
 node_modules:
-	npm install
+	$(NPM) install
 
 bower_components: node_modules
 	$(BOWER) install
