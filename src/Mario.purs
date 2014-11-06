@@ -68,7 +68,7 @@ isAirborne s = s.y > 0
 currentActivity :: GameState -> Verb
 currentActivity s | isAirborne s = Jumping
 currentActivity s | s.dx /= 0 = Walking
-currentActivity s = Standing
+currentActivity _ = Standing
 
 accel :: GameState -> Number
 accel s = if isAirborne s then airAccel else groundAccel
