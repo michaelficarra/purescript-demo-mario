@@ -285,6 +285,12 @@
 ### Types
 
 
+    data Activity where
+      Jumping :: Activity
+      Walking :: Activity
+      Standing :: Activity
+
+
     data Direction where
       Left :: Direction
       Right :: Direction
@@ -298,12 +304,6 @@
       px / frame^2
 
     type GameState = { x :: Number, y :: Number, dx :: Number, dy :: Number, dir :: Mario.Direction }
-
-
-    data Verb where
-      Jumping :: Verb
-      Walking :: Verb
-      Standing :: Verb
 
 
 ### Values
@@ -324,7 +324,7 @@
     applyGravity :: Mario.GameState -> Mario.GameState
 
 
-    currentActivity :: Mario.GameState -> Mario.Verb
+    currentActivity :: Mario.GameState -> Mario.Activity
 
 
     friction :: Mario.GameState -> Number
@@ -354,10 +354,10 @@
     jumpSpeed :: Number -> Number
 
 
-    marioLogic :: Boolean -> Boolean -> Boolean -> Mario.GameState -> Mario.GameState
+    marioLogic :: forall r. { left :: Boolean, right :: Boolean, jump :: Boolean | r } -> Mario.GameState -> Mario.GameState
 
 
-    marioSpriteUrl :: Mario.Verb -> Mario.Direction -> String
+    marioSpriteUrl :: Mario.Activity -> Mario.Direction -> String
 
 
     maxMoveSpeed :: Number
@@ -1598,7 +1598,7 @@
     leftKeyCodes :: [Number]
 
 
-    main :: forall t6202. Control.Monad.Eff.Eff (timer :: Control.Timer.Timer | t6202) Prelude.Unit
+    main :: forall t6195. Control.Monad.Eff.Eff (timer :: Control.Timer.Timer | t6195) Prelude.Unit
 
 
     mkInputs :: Boolean -> Boolean -> Boolean -> Main.Inputs

@@ -22,8 +22,8 @@ foreign import updatePosition """
   function updatePosition(node) {
     return function(coord) {
       return function() {
-        node.style.left = coord.x + 'px';
-        node.style.bottom = coord.y + 'px';
+        node.style.left = coord.x + "px";
+        node.style.bottom = coord.y + "px";
       };
     };
   }
@@ -31,7 +31,7 @@ foreign import updatePosition """
 
 foreign import updateSprite """
   function updateSprite(node) {
-    var a = document.createElement('a');
+    var a = document.createElement("a");
     return function(url) {
       return function() {
         a.href = url;
@@ -60,18 +60,18 @@ mkInputs l r j = { left: l, right: r, jump: j }
 
 foreign import onDOMContentLoaded """
   function onDOMContentLoaded(action) {
-    if (document.readyState === 'interactive') {
+    if (document.readyState === "interactive") {
       action();
     } else {
-      document.addEventListener('DOMContentLoaded', action);
+      document.addEventListener("DOMContentLoaded", action);
     }
     return function() { return {}; };
   }
   """ :: forall eff a. Eff (dom :: DOM | eff) a -> Eff (eff) Unit
 
-foreign import getMario
-  "function getMario() { return document.getElementById('mario'); }"
-  :: forall eff. Eff (dom :: DOM | eff) Node
+foreign import getMario """
+  function getMario() { return document.getElementById("mario"); }
+  """ :: forall eff. Eff (dom :: DOM | eff) Node
 
 
 main = onDOMContentLoaded do
@@ -80,8 +80,7 @@ main = onDOMContentLoaded do
   rightInputs <- combineKeyPresses <$> sequence (keyPressed <$> rightKeyCodes)
   jumpInputs <- combineKeyPresses <$> sequence (keyPressed <$> jumpKeyCodes)
   let inputs = mkInputs <$> leftInputs <*> rightInputs <*> jumpInputs
-  let applyInputs f inputs = f inputs.left inputs.right inputs.jump
   frames <- animationFrame
-  runSignal $ foldp (applyInputs marioLogic) initialState (sampleOn frames inputs) ~> \gameState -> do
+  runSignal $ foldp marioLogic initialState (sampleOn frames inputs) ~> \gameState -> do
     updateSprite marioElement $ marioSpriteUrl (currentActivity gameState) gameState.dir
     updatePosition marioElement (offsetGround groundHeight {x: gameState.x, y: gameState.y})
