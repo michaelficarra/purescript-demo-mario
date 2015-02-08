@@ -1,13 +1,6 @@
 module Mario where
 
-import Data.Traversable (sequence)
-import Data.Foldable (foldl)
 import Math (abs, max, min)
-import Signal ((~>), constant, foldp, merge, runSignal, sampleOn, Signal(..))
-import Signal.DOM (animationFrame, keyPressed)
-
-import Mario.DOM
-
 
 initialState :: GameState
 initialState = jump true {
@@ -28,14 +21,7 @@ instance showVerb :: Show Verb where
   show Standing = "stand"
 
 type GameState = { x :: Number, y :: Number, dx :: Number, dy :: Number, dir :: Direction }
-type Inputs = { right :: Boolean, left :: Boolean, jump :: Boolean }
 
-
-leftKeyCodes = [37, 65] -- left arrow, a
-rightKeyCodes = [39, 68] -- right arrow, d
-jumpKeyCodes = [38, 87] -- up arrow, w
-
-groundHeight = 40 -- px
 
 gravity = 0.2 -- px / frame^2
 
@@ -52,15 +38,6 @@ airFriction = 0.02 -- px / frame^2
 
 marioSpriteUrl :: Verb -> Direction -> String
 marioSpriteUrl verb dir = "resources/mario/" ++ show verb ++ "/" ++ show dir ++ ".gif"
-
-offsetGround :: Number -> Coordinate -> Coordinate
-offsetGround amount pos = pos { y = pos.y + amount - 4 } -- 4 pixels for image offset
-
-combineKeyPresses :: [Signal Boolean] -> Signal Boolean
-combineKeyPresses = foldl merge (constant false)
-
-mkInputs :: Boolean -> Boolean -> Boolean -> Inputs
-mkInputs l r j = { left: l, right: r, jump: j }
 
 isAirborne :: GameState -> Boolean
 isAirborne s = s.y > 0
@@ -109,19 +86,9 @@ applyFriction s | abs s.dx <= friction s = s { dx = 0 }
 applyFriction s | s.dx > 0 = s { dx = s.dx - friction s }
 applyFriction s | s.dx < 0 = s { dx = s.dx + friction s }
 
-marioLogic :: Inputs -> GameState -> GameState
-marioLogic inputs = velocity <<< applyGravity
-  <<< jump inputs.jump
-  <<< walk inputs.left inputs.right
-
-
-main = onDOMContentLoaded do
-  marioElement <- getMario
-  leftInputs <- combineKeyPresses <$> sequence (keyPressed <$> leftKeyCodes)
-  rightInputs <- combineKeyPresses <$> sequence (keyPressed <$> rightKeyCodes)
-  jumpInputs <- combineKeyPresses <$> sequence (keyPressed <$> jumpKeyCodes)
-  let inputs = mkInputs <$> leftInputs <*> rightInputs <*> jumpInputs
-  frames <- animationFrame
-  runSignal $ foldp marioLogic initialState (sampleOn frames inputs) ~> \gameState -> do
-    updateSprite marioElement $ marioSpriteUrl (currentActivity gameState) gameState.dir
-    updatePosition marioElement (offsetGround groundHeight {x: gameState.x, y: gameState.y})
+marioLogic :: Boolean -> Boolean -> Boolean -> GameState -> GameState
+marioLogic leftPressed rightPressed jumpPressed =
+  velocity
+  <<< applyGravity
+  <<< jump jumpPressed
+  <<< walk leftPressed rightPressed

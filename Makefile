@@ -1,5 +1,5 @@
-default: build doc
-all: build doc test
+default: build
+all: build externs doc test
 
 MODULE = Mario
 
@@ -25,8 +25,7 @@ PSCDOCS = $(shell command -v psc-docs || command -v docgen)
 lib/$(MODULE).js: bower_components $(SRC)
 	@mkdir -p '$(@D)'
 	$(PSC) --verbose-errors \
-	  --module $(MODULE) \
-	  --main $(MODULE) \
+	  --module Main --module $(MODULE) \
 	  $(BOWER_DEPS) $(SRC) \
 	  > lib/$(MODULE).js
 
@@ -35,8 +34,7 @@ lib/$(MODULE).js: bower_components $(SRC)
 lib/$(MODULE).externs.purs: bower_components $(SRC)
 	@mkdir -p '$(@D)'
 	$(PSC) --verbose-errors \
-	  --module $(MODULE) \
-	  --codegen $(MODULE) \
+	  --module Main --module $(MODULE) \
 	  --externs lib/$(MODULE).externs.purs \
 	  $(BOWER_DEPS) $(SRC) \
 	  > /dev/null
@@ -58,7 +56,8 @@ bower_components: node_modules
 	$(BOWER) install
 
 test: node_modules $(TESTSOUT) lib/$(MODULE).js
-	[ -d test ] && $(ISTANBUL) cover --root lib $(MOCHA) -- $(MOCHA_OPTS) -- built-tests
+	@mkdir -p test
+	$(ISTANBUL) cover --root lib $(MOCHA) -- $(MOCHA_OPTS) -- $(TESTSOUT)
 
 clean:
 	rm -rf lib built-tests coverage bower_components node_modules
