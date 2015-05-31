@@ -20,10 +20,10 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-dom": "*",
-    "purescript-foldable-traversable": "*",
-    "purescript-math": "*",
-    "purescript-signal": "git@github.com:bodil/purescript-signal.git"
+    "purescript-dom": "0.1.2",
+    "purescript-foldable-traversable": "0.3.1",
+    "purescript-math": "0.1.1",
+    "purescript-signal": "2.2.2"
   },
   "devDependencies": {}
 }
