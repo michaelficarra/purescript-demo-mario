@@ -14,9 +14,8 @@ type Coordinate = { x :: Number, y :: Number }
 
 groundHeight = 40 -- px
 
--- NOTE: subtracts 4 pixels for mario sprite offset
 offsetGround :: Number -> Coordinate -> Coordinate
-offsetGround amount pos = pos { y = pos.y + amount - 4 }
+offsetGround amount pos = pos { y = pos.y + amount }
 
 foreign import updatePosition """
   function updatePosition(node) {
