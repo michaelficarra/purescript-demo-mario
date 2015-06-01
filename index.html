@@ -8,20 +8,30 @@
       html, body {
         padding: 0;
         margin: 0;
-        background-color: rgb(174, 238, 238);
+      }
+      body {
+        zoom: 300%;
+        image-rendering: pixelated;
+
+        background: url("./resources/bg-day.png") center/cover repeat-x fixed #ADD5F8;
       }
       #ground {
         position: absolute;
-        background-color: rgb(74, 163, 41);
+        background:
+          url("./resources/grass.png") top repeat-x,
+          url("./resources/ground.png") top repeat #589C2A;
         width: 100%;
+        min-width: 50px;
         height: 40px;
         bottom: 0;
       }
       #mario {
         position: absolute;
       }
+
       /* inspired by http://unindented.org/articles/github-ribbon-using-css-transforms/ */
       .ribbon {
+        zoom: 33%;
         position: absolute;
         top: 25px;
         background-color: #a00;
