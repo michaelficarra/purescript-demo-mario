@@ -1,0 +1,10 @@
+.psci_modules
+bower_components
+built-tests
+coverage
+dist
+output
+node_modules
+.DS_Store
+.cabal-sandbox
+cabal.sandbox.config
