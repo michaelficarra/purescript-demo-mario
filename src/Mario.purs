@@ -15,6 +15,7 @@ type Character = {
 
 gravity = 0.15 -- px / frame^2
 accel = 0.06 -- px / frame^2
+maxMoveSpeed = 2.5 -- px / frame
 
 
 -- when Mario is in motion, his position changes
@@ -28,8 +29,8 @@ applyGravity c = c { dy = c.dy - gravity }
 
 -- Mario can move himself left/right with a fixed acceleration
 walk :: Boolean -> Boolean -> Character -> Character
-walk true false c = c { dx = c.dx - accel }
-walk false true c = c { dx = c.dx + accel }
+walk true false c = c { dx = max (-maxMoveSpeed) (c.dx - accel) }
+walk false true c = c { dx = min maxMoveSpeed (c.dx + accel) }
 walk _ _ c = c
 
 marioLogic :: { left :: Boolean, right :: Boolean } -> Character -> Character
