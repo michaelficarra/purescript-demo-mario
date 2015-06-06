@@ -6,7 +6,7 @@ import DOM (DOM(), Node())
 import Signal (foldp, runSignal, sampleOn, Signal())
 import Signal.DOM (animationFrame, keyPressed)
 
-import Mario (marioLogic, Character())
+import Mario (marioLogic, charSpriteDescriptor, Character(), SpriteDescriptor(), Direction(Left, Right))
 
 type GameState = { mario :: Character }
 
@@ -29,6 +29,18 @@ updatePosition = updatePositionP <<< offsetY groundHeight
   where
   offsetY :: Number -> Character -> Character
   offsetY amount c = c { y = c.y + amount }
+
+foreign import updateSpriteP """
+  function updateSpriteP(node) {
+  return function(className) {
+    return function() {
+      node.className = className;
+    };
+  };}
+  """ :: forall eff. Node -> SpriteDescriptor -> Eff (dom :: DOM | eff) Unit
+
+updateSprite :: forall eff. Character -> Eff _ Unit
+updateSprite c = updateSpriteP c.node (charSpriteDescriptor c)
 
 foreign import onDOMContentLoaded """
   function onDOMContentLoaded(action) {
@@ -53,7 +65,8 @@ initialState marioNode = {
     x: 50,
     y: 150,
     dx: 0,
-    dy: 0
+    dy: 0,
+    dir: Right
   }
 }
 
@@ -66,6 +79,7 @@ render :: Eff _ GameState -> Eff _ Unit
 render gameState = do
   gs <- gameState
   updatePosition gs.mario
+  updateSprite gs.mario
 
 main :: Eff _ Unit
 main = onDOMContentLoaded do
