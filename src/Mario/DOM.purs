@@ -4,7 +4,7 @@ import Control.Monad.Eff (Eff())
 import DOM (DOM(), Node())
 import Prelude ((<<<), (+), Unit())
 
-import Mario (Character())
+import Mario (charSpriteDescriptor, Character(), SpriteDescriptor())
 
 groundHeight = 40.0 --px
 
@@ -15,6 +15,11 @@ updatePosition = updatePositionP <<< offsetY groundHeight
   where
   offsetY :: Number -> Character -> Character
   offsetY amount c = c { y = c.y + amount }
+
+foreign import updateSpriteP :: forall eff. Node -> SpriteDescriptor -> Eff (dom :: DOM | eff) Unit
+
+updateSprite :: forall eff. Character -> Eff _ Unit
+updateSprite c = updateSpriteP c.node (charSpriteDescriptor c)
 
 foreign import onDOMContentLoaded :: forall a eff. Eff (dom :: DOM | eff) a -> Eff (eff) Unit
 

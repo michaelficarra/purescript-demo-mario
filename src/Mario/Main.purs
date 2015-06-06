@@ -6,8 +6,8 @@ import Signal (foldp, runSignal, sampleOn, Signal())
 import Signal.DOM (animationFrame, keyPressed)
 import Signal.Time (Time())
 
-import Mario (marioLogic, Character())
-import Mario.DOM (getMarioNode, onDOMContentLoaded, updatePosition)
+import Mario (charSpriteDescriptor, marioLogic, Character(), Direction(Left, Right), SpriteDescriptor())
+import Mario.DOM (getMarioNode, onDOMContentLoaded, updatePosition, updateSprite)
 
 type GameState = { mario :: Character }
 
@@ -23,7 +23,8 @@ initialState = do
       x: 50.0,
       y: 150.0,
       dx: 0.0,
-      dy: 0.0
+      dy: 0.0,
+      dir: Right
     }
   }
 
@@ -36,6 +37,7 @@ render :: Eff _ GameState -> Eff _ Unit
 render gameState = do
   gs <- gameState
   updatePosition gs.mario
+  updateSprite gs.mario
 
 main :: Eff _ Unit
 main = onDOMContentLoaded do

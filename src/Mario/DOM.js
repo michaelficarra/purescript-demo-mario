@@ -8,6 +8,15 @@ exports.updatePositionP =
     };
   };
 
+exports.updateSpriteP =
+  function updateSpriteP(node) {
+    return function(className) {
+      return function() {
+        node.className = className;
+      };
+    };
+  };
+
 exports.onDOMContentLoaded =
   function onDOMContentLoaded(action) {
     return function() {

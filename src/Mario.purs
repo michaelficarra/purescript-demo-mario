@@ -10,13 +10,23 @@ type Character = {
   x :: Number,
   y :: Number,
   dx :: Number,
-  dy :: Number
+  dy :: Number,
+  dir :: Direction
 }
+data Direction = Left | Right
+type SpriteDescriptor = String
 
 gravity = 0.15 -- px / frame^2
 accel = 0.06 -- px / frame^2
 maxMoveSpeed = 2.5 -- px / frame
 friction = 0.1 -- px / frame^2
+
+charSpriteDescriptor :: Character -> SpriteDescriptor
+charSpriteDescriptor c = "character stand " <> dirDesc c.dir
+  where
+  dirDesc :: Direction -> String
+  dirDesc Left = "left"
+  dirDesc Right = "right"
 
 -- when Mario is in motion, his position changes
 velocity :: Character -> Character
@@ -29,8 +39,8 @@ applyGravity c = c { dy = c.dy - gravity }
 
 -- Mario can move himself left/right with a fixed acceleration
 walk :: Boolean -> Boolean -> Character -> Character
-walk true false c = c { dx = max (-maxMoveSpeed) (c.dx - accel) }
-walk false true c = c { dx = min maxMoveSpeed (c.dx + accel) }
+walk true false c = c { dx = max (-maxMoveSpeed) (c.dx - accel), dir = Left }
+walk false true c = c { dx = min maxMoveSpeed (c.dx + accel), dir = Right }
 walk _ _ c = applyFriction c
   where
   -- Mario slows down when he is not attempting to move himself
