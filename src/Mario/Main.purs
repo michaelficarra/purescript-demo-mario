@@ -13,6 +13,7 @@ type GameState = { mario :: Character }
 
 leftKeyCode = 37
 rightKeyCode = 39
+jumpKeyCode = 38
 
 initialState :: Eff _ GameState
 initialState = do
@@ -28,7 +29,7 @@ initialState = do
     }
   }
 
-gameLogic :: { left :: Boolean, right :: Boolean } -> Eff _ GameState -> Eff _ GameState
+gameLogic :: { left :: Boolean, right :: Boolean, jump :: Boolean } -> Eff _ GameState -> Eff _ GameState
 gameLogic inputs gameState = do
   gs <- gameState
   return (gs { mario = marioLogic inputs gs.mario })
@@ -44,6 +45,7 @@ main = onDOMContentLoaded do
   frames <- animationFrame
   leftInputs <- keyPressed leftKeyCode
   rightInputs <- keyPressed rightKeyCode
-  let inputs = { left: _, right: _ } <$> leftInputs <*> rightInputs
+  jumpInputs <- keyPressed jumpKeyCode
+  let inputs = { left: _, right: _, jump: _ } <$> leftInputs <*> rightInputs <*> jumpInputs
   let game = foldp gameLogic initialState (sampleOn frames inputs)
   runSignal (render <$> game)
