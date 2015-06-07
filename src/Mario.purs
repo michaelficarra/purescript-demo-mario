@@ -16,6 +16,7 @@ type Character = {
 gravity = 0.15 -- px / frame^2
 accel = 0.06 -- px / frame^2
 maxMoveSpeed = 2.5 -- px / frame
+friction = 0.1 -- px / frame^2
 
 -- when Mario is in motion, his position changes
 velocity :: Character -> Character
@@ -30,7 +31,14 @@ applyGravity c = c { dy = c.dy - gravity }
 walk :: Boolean -> Boolean -> Character -> Character
 walk true false c = c { dx = max (-maxMoveSpeed) (c.dx - accel) }
 walk false true c = c { dx = min maxMoveSpeed (c.dx + accel) }
-walk _ _ c = c
+walk _ _ c = applyFriction c
+  where
+  -- Mario slows down when he is not attempting to move himself
+  applyFriction :: Character -> Character
+  applyFriction c | c.dx == 0.0 = c
+  applyFriction c | abs c.dx <= friction = c { dx = 0.0 }
+  applyFriction c | c.dx > 0.0 = c { dx = c.dx - friction }
+  applyFriction c | c.dx < 0.0 = c { dx = c.dx + friction }
 
 marioLogic :: { left :: Boolean, right :: Boolean } -> Character -> Character
 marioLogic inputs = velocity <<< applyGravity <<< walk inputs.left inputs.right
