@@ -15,12 +15,13 @@ type Character = {
 }
 data Direction = Left | Right
 type SpriteDescriptor = String
-data Activity = Walking | Standing
+data Activity = Walking | Standing | Jumping
 
 gravity = 0.15 -- px / frame^2
 accel = 0.06 -- px / frame^2
 maxMoveSpeed = 2.5 -- px / frame
 friction = 0.1 -- px / frame^2
+jumpSpeed = 6 -- px / frame
 
 
 charSpriteDescriptor :: Character -> SpriteDescriptor
@@ -29,12 +30,19 @@ charSpriteDescriptor c = "character " <> activityDesc (currentActivity c) <> " "
   activityDesc :: Activity -> String
   activityDesc Walking = "walk"
   activityDesc Standing = "stand"
+  activityDesc Jumping = "jump"
+
   dirDesc :: Direction -> String
   dirDesc Left = "left"
   dirDesc Right = "right"
+
   currentActivity :: Character -> Activity
+  currentActivity c | isAirborne c = Jumping
   currentActivity c | c.dx == 0 = Standing
   currentActivity _ = Walking
+
+isAirborne :: Character -> Boolean
+isAirborne c = c.y > 0
 
 -- when Mario is in motion, his position changes
 velocity :: Character -> Character
@@ -58,5 +66,10 @@ walk _ _ c = applyFriction c
   applyFriction c | c.dx > 0 = c { dx = c.dx - friction }
   applyFriction c | c.dx < 0 = c { dx = c.dx + friction }
 
-marioLogic :: { left :: Boolean, right :: Boolean } -> Character -> Character
-marioLogic inputs = velocity <<< applyGravity <<< walk inputs.left inputs.right
+-- Mario can change his vertical acceleration when he is on the ground
+jump :: Boolean -> Character -> Character
+jump true c | not (isAirborne c) = c { dy = jumpSpeed }
+jump _ c = c
+
+marioLogic :: { left :: Boolean, right :: Boolean, jump :: Boolean } -> Character -> Character
+marioLogic inputs = velocity <<< applyGravity <<< walk inputs.left inputs.right <<< jump inputs.jump
