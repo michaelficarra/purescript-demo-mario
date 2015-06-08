@@ -21,10 +21,10 @@ initialState = do
   return {
     mario: {
       node: marioNode,
-      x: 50.0,
-      y: 150.0,
-      dx: 0.0,
-      dy: 0.0,
+      x: -50.0,
+      y: 0.0,
+      dx: 3.0,
+      dy: 6.0,
       dir: Right
     }
   }
