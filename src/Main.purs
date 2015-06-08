@@ -1,61 +1,53 @@
 module Main where
 
-import Control.Monad.Eff (Eff(..))
-import Data.Foldable (foldl)
-import Data.Traversable (sequence)
-import DOM (DOM(..), Node(..))
-import Signal ((~>), constant, foldp, merge, runSignal, sampleOn, Signal(..))
+import Control.Monad (foldM)
+import Control.Monad.Eff (Eff())
+import Data.Array (filter, length, take)
+import Data.Foldable (foldr)
+import Data.Traversable (for, sequence)
+import DOM (DOM(), Node())
+import Signal ((~>), constant, foldp, merge, runSignal, sampleOn, Signal())
 import Signal.DOM (animationFrame, keyPressed)
 
-import Mario (marioLogic, initialState, marioSpriteUrl, currentActivity)
+import Mario (marioLogic, charSpriteDescriptor, Character(), SpriteDescriptor(), Direction(Left, Right))
 
-type Coordinate = { x :: Number, y :: Number }
-
+type GameState = { mario :: Character }
 
 groundHeight = 40 -- px
+leftKeyCode = 37
+rightKeyCode = 39
+jumpKeyCode = 38
 
-offsetGround :: Number -> Coordinate -> Coordinate
-offsetGround amount pos = pos { y = pos.y + amount }
 
-foreign import updatePosition """
-  function updatePosition(node) {
-    return function(coord) {
-      return function() {
-        node.style.left = coord.x + "px";
-        node.style.bottom = coord.y + "px";
-      };
+foreign import updatePositionP """
+  function updatePositionP(c) {
+    return function() {
+      if (c.node.parentNode == null) {
+        document.body.insertBefore(c.node, document.body.firstChild);
+      }
+      c.node.style.left = c.x + "px";
+      c.node.style.bottom = c.y + "px";
     };
   }
-  """ :: Node -> Coordinate -> forall eff. Eff (dom :: DOM | eff) Unit
+  """ :: forall eff. Character -> Eff (dom :: DOM | eff) Unit
 
-foreign import updateSprite """
-  function updateSprite(node) {
-    var a = document.createElement("a");
-    return function(url) {
-      return function() {
-        a.href = url;
-        if (node.src !== a.href) node.src = url;
-      };
+updatePosition :: forall eff. Character -> Eff _ Unit
+updatePosition = updatePositionP <<< offsetGround groundHeight
+  where
+  offsetGround :: Number -> Character -> Character
+  offsetGround amount pos = pos { y = pos.y + amount }
+
+foreign import updateSpriteP """
+  function updateSpriteP(node) {
+  return function(className) {
+    return function() {
+      node.className = className;
     };
-  }
-  """ :: Node -> String -> forall eff. Eff (dom :: DOM | eff) Unit
+  };}
+  """ :: forall eff. Node -> SpriteDescriptor -> Eff (dom :: DOM | eff) Unit
 
-
-type Inputs = { right :: Boolean, left :: Boolean, jump :: Boolean }
-
--- left arrow, a
-leftKeyCodes = [37, 65]
--- right arrow, d
-rightKeyCodes = [39, 68]
--- up arrow, w
-jumpKeyCodes = [38, 87]
-
-combineKeyPresses :: [Signal Boolean] -> Signal Boolean
-combineKeyPresses = foldl merge (constant false)
-
-mkInputs :: Boolean -> Boolean -> Boolean -> Inputs
-mkInputs l r j = { left: l, right: r, jump: j }
-
+updateSprite :: forall eff. Character -> Eff _ Unit
+updateSprite c = updateSpriteP c.node $ charSpriteDescriptor c
 
 foreign import onDOMContentLoaded """
   function onDOMContentLoaded(action) {
@@ -66,20 +58,41 @@ foreign import onDOMContentLoaded """
     }
     return function() { return {}; };
   }
-  """ :: forall eff a. Eff (dom :: DOM | eff) a -> Eff (eff) Unit
+  """ :: forall a eff. Eff (dom :: DOM | eff) a -> Eff (eff) Unit
 
-foreign import getMario """
-  function getMario() { return document.getElementById("mario"); }
+foreign import getMarioNode """
+  function getMarioNode() { return document.getElementById("mario"); }
   """ :: forall eff. Eff (dom :: DOM | eff) Node
 
 
+initialState :: Node -> GameState
+initialState marioNode = {
+  mario: {
+    node: marioNode,
+    x: -50, y: 0,
+    dx: 3, dy: 3,
+    dir: Right
+  }
+}
+
+gameLogic :: forall r. { left :: Boolean, right :: Boolean, jump :: Boolean | r } -> Eff _ GameState -> Eff _ GameState
+gameLogic inputs gameState = do
+  gs <- gameState
+  return $ gs { mario = marioLogic inputs gs.mario }
+
+render :: Eff _ GameState -> Eff _ Unit
+render gameState = do
+  gs <- gameState
+  updatePosition gs.mario
+  updateSprite gs.mario
+
+main :: Eff _ Unit
 main = onDOMContentLoaded do
-  marioElement <- getMario
-  leftInputs <- combineKeyPresses <$> sequence (keyPressed <$> leftKeyCodes)
-  rightInputs <- combineKeyPresses <$> sequence (keyPressed <$> rightKeyCodes)
-  jumpInputs <- combineKeyPresses <$> sequence (keyPressed <$> jumpKeyCodes)
-  let inputs = mkInputs <$> leftInputs <*> rightInputs <*> jumpInputs
+  marioNode <- getMarioNode
   frames <- animationFrame
-  runSignal $ foldp marioLogic initialState (sampleOn frames inputs) ~> \gameState -> do
-    updateSprite marioElement $ marioSpriteUrl (currentActivity gameState) gameState.dir
-    updatePosition marioElement (offsetGround groundHeight {x: gameState.x, y: gameState.y})
+  leftInputs <- keyPressed leftKeyCode
+  rightInputs <- keyPressed rightKeyCode
+  jumpInputs <- keyPressed jumpKeyCode
+  let inputs = { left: _, right: _, jump: _ } <$> leftInputs <*> rightInputs <*> jumpInputs
+  let game = foldp gameLogic (pure $ initialState marioNode) (sampleOn frames inputs) ~> render
+  runSignal game

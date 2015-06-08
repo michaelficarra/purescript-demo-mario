@@ -26,7 +26,7 @@ lib/$(MODULE).js: bower_components $(SRC)
 	$(PSC) --verbose-errors \
 	  --module Main --module $(MODULE) \
 	  $(BOWER_DEPS) $(SRC) \
-	  > lib/$(MODULE).js
+	  --output lib/$(MODULE).js
 
 .PHONY: default all build externs deps doc clean
 
@@ -34,6 +34,7 @@ lib/$(MODULE).externs.purs: bower_components $(SRC)
 	@mkdir -p '$(@D)'
 	$(PSC) --verbose-errors \
 	  --module Main --module $(MODULE) \
+	  --codegen Main --codegen $(MODULE) \
 	  --externs lib/$(MODULE).externs.purs \
 	  $(BOWER_DEPS) $(SRC) \
 	  > /dev/null
