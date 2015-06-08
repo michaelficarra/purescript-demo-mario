@@ -69,6 +69,7 @@ walk _ _ c = applyFriction c
 -- Mario can change his vertical acceleration when he is on the ground
 jump :: Boolean -> Character -> Character
 jump true c | not (isAirborne c) = c { dy = jumpSpeed }
+jump false c | isAirborne c && c.dy > 0 = c { dy = c.dy - gravity }
 jump _ c = c
 
 marioLogic :: { left :: Boolean, right :: Boolean, jump :: Boolean } -> Character -> Character
