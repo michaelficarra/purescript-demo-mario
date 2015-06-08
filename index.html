@@ -2,78 +2,131 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>purescript-demo-mario</title>
+    <title>Mario!</title>
     <script src="lib/Mario.js"></script>
     <style>
+      @font-face {
+          font-family: "press_start_k";
+          src: url("resources/font/prstartk.eot");
+          src: url("resources/font/prstartk.eot?#iefix") format("embedded-opentype"),
+               url("resources/font/prstartk.woff2") format("woff2"),
+               url("resources/font/prstartk.woff") format("woff"),
+               url("resources/font/prstartk.ttf") format("truetype"),
+               url("resources/font/prstartk.svg#press_start_kregular") format("svg");
+          font-weight: normal;
+          font-style: normal;
+
+      }
       html, body {
         padding: 0;
         margin: 0;
       }
       body {
+        overflow: hidden;
         zoom: 300%;
         image-rendering: pixelated;
-
-        background: url("./resources/bg-day.png") center/cover repeat-x fixed #ADD5F8;
+        background: url("resources/bg-day.png") center/cover repeat-x fixed #B0E9F8;
       }
       #ground {
         position: absolute;
         background:
-          url("./resources/grass.png") top repeat-x,
-          url("./resources/ground.png") top repeat #589C2A;
+          url("resources/grass.png") top repeat-x,
+          url("resources/ground.png") top repeat #589C2A;
         width: 100%;
         min-width: 50px;
         height: 40px;
         bottom: 0;
       }
+      .character {
+        position: absolute;
+      }
       #mario {
+        width: 27px;
+        height: 27px;
+        background: url("resources/mario/stand/right.gif");
+      }
+      #mario.stand.left {
+        background: url("resources/mario/stand/left.gif");
+      }
+      #mario.stand.right {
+        background: url("resources/mario/stand/right.gif");
+      }
+      #mario.walk.left {
+        background: url("resources/mario/walk/left.gif");
+      }
+      #mario.walk.right {
+        background: url("resources/mario/walk/right.gif");
+      }
+      #mario.jump.left {
+        background: url("resources/mario/jump/left.gif");
+      }
+      #mario.jump.right {
+        background: url("resources/mario/jump/right.gif");
+      }
+      .goomba {
+        width: 16px;
+        height: 16px;
+        background: url("resources/goomba/right.gif");
+      }
+      .goomba.left {
+        background: url("resources/goomba/left.gif");
+      }
+      .goomba.right {
+        background: url("resources/goomba/right.gif");
+      }
+      #hud {
+        position: relative;
+        font-family: "press_start_k";
+        font-size: 8px;
+        color: #FFF; /* #DFD16E */
+        text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000;
+        text-transform: uppercase;
+        margin: 10px;
+        z-index: 100;
+      }
+      #item-container {
+        height: 28px;
+        width: 28px;
+        background: url("resources/item-container.png");
+        margin: 0 auto;
+      }
+      #player-name {
         position: absolute;
+        left: 0;
+        top: 4px;
+        color: #FB401B;
       }
-
-      /* inspired by http://unindented.org/articles/github-ribbon-using-css-transforms/ */
-      .ribbon {
-        zoom: 33%;
+      #player-lives {
         position: absolute;
-        top: 25px;
-        background-color: #a00;
-        white-space: nowrap;
-        -webkit-box-shadow: 0 0 10px #888;
-           -moz-box-shadow: 0 0 10px #888;
-                box-shadow: 0 0 10px #888;
+        left: 4px;
+        top: 15px;
+        white-space: pre;
       }
-      .ribbon.right {
-        right: -55px;
-        -webkit-transform: rotate(32deg);
-           -moz-transform: rotate(32deg);
-            -ms-transform: rotate(32deg);
-             -o-transform: rotate(32deg);
-                transform: rotate(32deg);
+      #player-lives::before {
+        content: "X";
       }
-      .ribbon.left {
-        left: -55px;
-        -webkit-transform: rotate(-32deg);
-           -moz-transform: rotate(-32deg);
-            -ms-transform: rotate(-32deg);
-             -o-transform: rotate(-32deg);
-                transform: rotate(-32deg);
+      #player-score {
+        position: absolute;
+        white-space: pre;
+        line-height: 130%;
+        right: 0;
+        top: 6px;
+        background: url("resources/hud-score-coin.png") no-repeat;
+        padding-left: 10px;
       }
-      .ribbon a {
-        border: 1px solid #faa;
-        color: #fff;
-        display: block;
-        font: bold 81.25% 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        margin: 1px 0;
-        padding: 7px 60px;
-        text-align: center;
-        text-decoration: none;
-        text-shadow: 0 0 5px #444;
+      #player-score::before {
+        content: "X ";
       }
     </style>
   </head>
   <body>
-    <div class="ribbon left">
-      <a href="https://github.com/michaelficarra/purescript-demo-mario">Fork me on GitHub</a>
-    </div>
-    <img id="mario" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" alt="mario" />
     <div id="ground"></div>
+    <div id="mario" class="character stand right"></div>
+    <div id="hud">
+      <span id="player-name">Mario</span>
+      <span id="player-lives"> 5</span>
+      <div id="item-container"></div>
+      <span id="player-score">  0</span>
+    </div>
   </body>
 </html>

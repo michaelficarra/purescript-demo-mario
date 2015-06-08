@@ -1,3 +1,4 @@
+.DS_Store
 .psci_modules
 Makefile
 README.md
