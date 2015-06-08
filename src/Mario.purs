@@ -21,6 +21,7 @@ velocity c = c { x = c.x + c.dx, y = c.y + c.dy }
 
 -- when Mario is above the ground, he is continuously pulled downward
 applyGravity :: Character -> Character
+applyGravity c | c.y <= -c.dy = c { y = 0.0, dy = 0.0 }
 applyGravity c = c { dy = c.dy - gravity }
 
 marioLogic :: Character -> Character

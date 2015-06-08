@@ -1,13 +1,12 @@
 // module Mario.DOM
 
-exports.updatePosition =
-  function updatePosition(c) {
+exports.updatePositionP =
+  function updatePositionP(c) {
     return function() {
       c.node.style.left = c.x + "px";
       c.node.style.bottom = c.y + "px";
     };
   };
-
 
 exports.onDOMContentLoaded =
   function onDOMContentLoaded(action) {

@@ -6,7 +6,15 @@ import Prelude ((<<<), (+), Unit())
 
 import Mario (Character())
 
-foreign import updatePosition :: forall eff. Character -> Eff (dom :: DOM | eff) Unit
+groundHeight = 40.0 --px
+
+foreign import updatePositionP :: forall eff. Character -> Eff (dom :: DOM | eff) Unit
+
+updatePosition :: Character -> Eff _ Unit
+updatePosition = updatePositionP <<< offsetY groundHeight
+  where
+  offsetY :: Number -> Character -> Character
+  offsetY amount c = c { y = c.y + amount }
 
 foreign import onDOMContentLoaded :: forall a eff. Eff (dom :: DOM | eff) a -> Eff (eff) Unit
 
