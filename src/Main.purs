@@ -63,10 +63,10 @@ initialState :: Node -> GameState
 initialState marioNode = {
   mario: {
     node: marioNode,
-    x: 50,
-    y: 150,
-    dx: 0,
-    dy: 0,
+    x: -50,
+    y: 0,
+    dx: 3,
+    dy: 6,
     dir: Right
   }
 }
