@@ -6,8 +6,22 @@ import DOM (DOM(), Node())
 import Math (abs, max, min)
 
 type Character = {
-  node :: Node
+  node :: Node,
+  x :: Number,
+  y :: Number,
+  dx :: Number,
+  dy :: Number
 }
 
+gravity = 0.15 -- px / frame^2
+
+-- when Mario is in motion, his position changes
+velocity :: Character -> Character
+velocity c = c { x = c.x + c.dx, y = c.y + c.dy }
+
+-- when Mario is above the ground, he is continuously pulled downward
+applyGravity :: Character -> Character
+applyGravity c = c { dy = c.dy - gravity }
+
 marioLogic :: Character -> Character
-marioLogic x = x
+marioLogic = velocity <<< applyGravity

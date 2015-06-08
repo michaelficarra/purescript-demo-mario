@@ -7,7 +7,7 @@ import Signal.DOM (animationFrame, keyPressed)
 import Signal.Time (Time())
 
 import Mario (marioLogic, Character())
-import Mario.DOM (getMarioNode, onDOMContentLoaded)
+import Mario.DOM (getMarioNode, onDOMContentLoaded, updatePosition)
 
 type GameState = { mario :: Character }
 
@@ -16,7 +16,11 @@ initialState = do
   marioNode <- getMarioNode
   return {
     mario: {
-      node: marioNode
+      node: marioNode,
+      x: 50.0,
+      y: 150.0,
+      dx: 0.0,
+      dy: 0.0
     }
   }
 
@@ -28,7 +32,7 @@ gameLogic currentTime gameState = do
 render :: Eff _ GameState -> Eff _ Unit
 render gameState = do
   gs <- gameState
-  return unit
+  updatePosition gs.mario
 
 main :: Eff _ Unit
 main = onDOMContentLoaded do

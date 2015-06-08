@@ -6,6 +6,8 @@ import Prelude ((<<<), (+), Unit())
 
 import Mario (Character())
 
+foreign import updatePosition :: forall eff. Character -> Eff (dom :: DOM | eff) Unit
+
 foreign import onDOMContentLoaded :: forall a eff. Eff (dom :: DOM | eff) a -> Eff (eff) Unit
 
 foreign import getMarioNode :: forall eff. Eff (dom :: DOM | eff) Node
