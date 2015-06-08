@@ -11,6 +11,15 @@ import Mario (marioLogic, Character())
 type GameState = { mario :: Character }
 
 
+foreign import updatePosition """
+  function updatePosition(c) {
+    return function() {
+      c.node.style.left = c.x + "px";
+      c.node.style.bottom = c.y + "px";
+    };
+  }
+  """ :: forall eff. Character -> Eff (dom :: DOM | eff) Unit
+
 foreign import onDOMContentLoaded """
   function onDOMContentLoaded(action) {
     if (document.readyState === "interactive") {
@@ -28,7 +37,15 @@ foreign import getMarioNode """
 
 
 initialState :: Node -> GameState
-initialState marioNode = { mario: { node: marioNode } }
+initialState marioNode = {
+  mario: {
+    node: marioNode,
+    x: 50,
+    y: 150,
+    dx: 0,
+    dy: 0
+  }
+}
 
 gameLogic :: Number -> Eff _ GameState -> Eff _ GameState
 gameLogic frameCounter gameState = do
@@ -38,7 +55,7 @@ gameLogic frameCounter gameState = do
 render :: Eff _ GameState -> Eff _ Unit
 render gameState = do
   gs <- gameState
-  return unit
+  updatePosition gs.mario
 
 main :: Eff _ Unit
 main = onDOMContentLoaded do
