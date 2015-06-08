@@ -10,15 +10,23 @@ import Mario (marioLogic, Character())
 
 type GameState = { mario :: Character }
 
+groundHeight = 40 -- px
 
-foreign import updatePosition """
-  function updatePosition(c) {
+
+foreign import updatePositionP """
+  function updatePositionP(c) {
     return function() {
       c.node.style.left = c.x + "px";
       c.node.style.bottom = c.y + "px";
     };
   }
   """ :: forall eff. Character -> Eff (dom :: DOM | eff) Unit
+
+updatePosition :: Character -> Eff _ Unit
+updatePosition = updatePositionP <<< offsetY groundHeight
+  where
+  offsetY :: Number -> Character -> Character
+  offsetY amount c = c { y = c.y + amount }
 
 foreign import onDOMContentLoaded """
   function onDOMContentLoaded(action) {
