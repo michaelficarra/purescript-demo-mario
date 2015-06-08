@@ -21,7 +21,8 @@ gravity = 0.15 -- px / frame^2
 accel = 0.06 -- px / frame^2
 maxMoveSpeed = 2.5 -- px / frame
 friction = 0.1 -- px / frame^2
-jumpSpeed = 6.0 -- px / frame
+jumpCoefficient = 0.8 -- px / frame^3
+minJumpSpeed = 4.0 -- px / frame
 
 charSpriteDescriptor :: Character -> SpriteDescriptor
 charSpriteDescriptor c = "character " <> activityDesc (currentActivity c) <> " " <> dirDesc c.dir
@@ -65,9 +66,9 @@ walk _ _ c = applyFriction c
   applyFriction c | c.dx > 0.0 = c { dx = c.dx - friction }
   applyFriction c | c.dx < 0.0 = c { dx = c.dx + friction }
 
--- Mario can change his vertical acceleration when he is on the ground
+-- Mario can change his vertical acceleration when he is on the ground, proportional to his current speed
 jump :: Boolean -> Character -> Character
-jump true c | not (isAirborne c) = c { dy = jumpSpeed }
+jump true c | not (isAirborne c) = c { dy = minJumpSpeed + jumpCoefficient * abs c.dx }
 jump false c | isAirborne c && c.dy > 0.0 = c { dy = c.dy - gravity }
 jump _ c = c
 
