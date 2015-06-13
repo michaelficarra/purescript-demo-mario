@@ -15,6 +15,7 @@ type Character = {
 }
 data Direction = Left | Right
 type SpriteDescriptor = String
+data Activity = Walking | Standing
 
 gravity = 0.15 -- px / frame^2
 accel = 0.06 -- px / frame^2
@@ -23,11 +24,17 @@ friction = 0.1 -- px / frame^2
 
 
 charSpriteDescriptor :: Character -> SpriteDescriptor
-charSpriteDescriptor c = "character stand " <> dirDesc c.dir
+charSpriteDescriptor c = "character " <> activityDesc (currentActivity c) <> " " <> dirDesc c.dir
   where
+  activityDesc :: Activity -> String
+  activityDesc Walking = "walk"
+  activityDesc Standing = "stand"
   dirDesc :: Direction -> String
   dirDesc Left = "left"
   dirDesc Right = "right"
+  currentActivity :: Character -> Activity
+  currentActivity c | c.dx == 0 = Standing
+  currentActivity _ = Walking
 
 -- when Mario is in motion, his position changes
 velocity :: Character -> Character
