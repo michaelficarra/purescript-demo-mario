@@ -11,6 +11,9 @@ import Mario.DOM (getMarioNode, onDOMContentLoaded, updatePosition)
 
 type GameState = { mario :: Character }
 
+leftKeyCode = 37
+rightKeyCode = 39
+
 initialState :: Eff _ GameState
 initialState = do
   marioNode <- getMarioNode
@@ -24,10 +27,10 @@ initialState = do
     }
   }
 
-gameLogic :: Time -> Eff _ GameState -> Eff _ GameState
-gameLogic currentTime gameState = do
+gameLogic :: { left :: Boolean, right :: Boolean } -> Eff _ GameState -> Eff _ GameState
+gameLogic inputs gameState = do
   gs <- gameState
-  return (gs { mario = marioLogic gs.mario })
+  return (gs { mario = marioLogic inputs gs.mario })
 
 render :: Eff _ GameState -> Eff _ Unit
 render gameState = do
@@ -37,5 +40,8 @@ render gameState = do
 main :: Eff _ Unit
 main = onDOMContentLoaded do
   frames <- animationFrame
-  let game = foldp gameLogic initialState frames
+  leftInputs <- keyPressed leftKeyCode
+  rightInputs <- keyPressed rightKeyCode
+  let inputs = { left: _, right: _ } <$> leftInputs <*> rightInputs
+  let game = foldp gameLogic initialState (sampleOn frames inputs)
   runSignal (render <$> game)
