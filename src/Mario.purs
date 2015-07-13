@@ -1,77 +1,84 @@
 module Mario where
 
+import Prelude ((<<<), (*), (+), (-), (==), (<), (>), (<=), (<>), (&&), not)
 import Control.Monad.Eff (Eff())
-import Control.Monad.Eff.Random (random)
 import DOM (DOM(), Node())
 import Math (abs, max, min)
 
-type Character = { node :: Node, x :: Number, y :: Number, dx :: Number, dy :: Number, dir :: Direction }
-type SpriteDescriptor = String
+type Character = {
+  node :: Node,
+  x :: Number,
+  y :: Number,
+  dx :: Number,
+  dy :: Number,
+  dir :: Direction
+}
 data Direction = Left | Right
+type SpriteDescriptor = String
 data Activity = Walking | Standing | Jumping
 
-gravity = 0.1 -- px / frame^2
+gravity = 0.15 -- px / frame^2
 maxMoveSpeed = 2.5 -- px / frame
 groundAccel = 0.06 -- px / frame^2
 airAccel = 0.04 -- px / frame^2
 groundFriction = 0.1 -- px / frame^2
 airFriction = 0.02 -- px / frame^2
-jumpCoefficient = 0.4 -- px / frame^3
-minJumpSpeed = 2.5 -- px / frame
-
+jumpCoefficient = 0.8 -- px / frame^3
+minJumpSpeed = 4.0 -- px / frame
 
 charSpriteDescriptor :: Character -> SpriteDescriptor
-charSpriteDescriptor s = "character " ++ activityDesc (currentActivity s) ++ " " ++ dirDesc s.dir
+charSpriteDescriptor c = "character " <> activityDesc (currentActivity c) <> " " <> dirDesc c.dir
   where
-    activityDesc :: Activity -> String
-    activityDesc Walking = "walk"
-    activityDesc Standing = "stand"
-    activityDesc Jumping = "jump"
-    dirDesc :: Direction -> String
-    dirDesc Left = "left"
-    dirDesc Right = "right"
+  activityDesc :: Activity -> String
+  activityDesc Walking = "walk"
+  activityDesc Standing = "stand"
+  activityDesc Jumping = "jump"
+
+  dirDesc :: Direction -> String
+  dirDesc Left = "left"
+  dirDesc Right = "right"
+
+  currentActivity :: Character -> Activity
+  currentActivity c | isAirborne c = Jumping
+  currentActivity c | c.dx == 0.0 = Standing
+  currentActivity _ = Walking
 
 isAirborne :: Character -> Boolean
-isAirborne s = s.y > 0
+isAirborne c = c.y > 0.0
 
 accel :: Character -> Number
-accel s = if isAirborne s then airAccel else groundAccel
+accel c = if isAirborne c then airAccel else groundAccel
 
 friction :: Character -> Number
-friction s = if isAirborne s then airFriction else groundFriction
-
-currentActivity :: Character -> Activity
-currentActivity s | isAirborne s = Jumping
-currentActivity s | s.dx == 0 = Standing
-currentActivity _ = Walking
+friction c = if isAirborne c then airFriction else groundFriction
 
 -- when Mario is in motion, his position changes
 velocity :: Character -> Character
-velocity s = s { x = s.x + s.dx, y = s.y + s.dy }
+velocity c = c { x = c.x + c.dx, y = c.y + c.dy }
 
 -- when Mario is above the ground, he is continuously pulled downward
 applyGravity :: Character -> Character
-applyGravity s | s.y <= -s.dy = s { y = 0, dy = 0 }
-applyGravity s = s { y = s.y + s.dy, dy = s.dy - gravity }
+applyGravity c | c.y <= -c.dy = c { y = 0.0, dy = 0.0 }
+applyGravity c = c { dy = c.dy - gravity }
 
 -- Mario can move himself left/right with a fixed acceleration
 walk :: Boolean -> Boolean -> Character -> Character
-walk true false s = s { dx = max (-maxMoveSpeed) (s.dx - accel s), dir = Left }
-walk false true s = s { dx = min (maxMoveSpeed) (s.dx + accel s), dir = Right }
-walk _ _ s = applyFriction s
+walk true false c = c { dx = max (-maxMoveSpeed) (c.dx - accel c), dir = Left }
+walk false true c = c { dx = min maxMoveSpeed (c.dx + accel c), dir = Right }
+walk _ _ c = applyFriction c
   where
   -- Mario slows down when he is not attempting to move himself
   applyFriction :: Character -> Character
-  applyFriction s | s.dx == 0 = s
-  applyFriction s | abs s.dx <= friction s = s { dx = 0 }
-  applyFriction s | s.dx > 0 = s { dx = s.dx - friction s }
-  applyFriction s | s.dx < 0 = s { dx = s.dx + friction s }
+  applyFriction c | c.dx == 0.0 = c
+  applyFriction c | abs c.dx <= friction c = c { dx = 0.0 }
+  applyFriction c | c.dx > 0.0 = c { dx = c.dx - friction c }
+  applyFriction c | c.dx < 0.0 = c { dx = c.dx + friction c }
 
--- Mario can move change his vertical acceleration when he is on the ground, proportional to his current speed
+-- Mario can change his vertical acceleration when he is on the ground, proportional to his current speed
 jump :: Boolean -> Character -> Character
-jump true s | not (isAirborne s) = s { dy = minJumpSpeed + jumpCoefficient * abs s.dx }
-jump false s | isAirborne s && s.dy > 0 = s { dy = s.dy - gravity }
-jump _ s = s
+jump true c | not (isAirborne c) = c { dy = minJumpSpeed + jumpCoefficient * abs c.dx }
+jump false c | isAirborne c && c.dy > 0.0 = c { dy = c.dy - gravity }
+jump _ c = c
 
-marioLogic :: forall r. { left :: Boolean, right :: Boolean, jump :: Boolean | r } -> Character -> Character
+marioLogic :: { left :: Boolean, right :: Boolean, jump :: Boolean } -> Character -> Character
 marioLogic inputs = velocity <<< applyGravity <<< walk inputs.left inputs.right <<< jump inputs.jump

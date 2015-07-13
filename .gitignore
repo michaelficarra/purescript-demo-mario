@@ -2,6 +2,10 @@
 bower_components
 built-tests
 coverage
-lib
+docs
+dist
+output
 node_modules
 .DS_Store
+.cabal-sandbox
+cabal.sandbox.config
