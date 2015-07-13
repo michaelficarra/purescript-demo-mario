@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Mario!</title>
-    <script src="lib/Mario.js"></script>
+    <script src="dist/Mario.js"></script>
     <style>
       @font-face {
           font-family: "press_start_k";
@@ -24,6 +24,7 @@
       body {
         overflow: hidden;
         zoom: 300%;
+        image-rendering: -moz-pixelated; /* Firefox */
         image-rendering: pixelated;
         background: url("resources/bg-day.png") center/cover repeat-x fixed #B0E9F8;
       }
