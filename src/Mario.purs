@@ -65,7 +65,7 @@ applyGravity c | c.y <= -c.dy = c { y = 0.0, dy = 0.0 }
 applyGravity c = c { dy = c.dy - gravity }
 
 -- Mario can move himself left/right with a fixed acceleration
-walk :: Partial => Boolean -> Boolean -> Character -> Character
+walk :: Boolean -> Boolean -> Character -> Character
 walk true false c = c { dx = max (-maxMoveSpeed) (c.dx - accel c), dir = Left }
 walk false true c = c { dx = min maxMoveSpeed (c.dx + accel c), dir = Right }
 walk _ _ c = applyFriction c
@@ -74,8 +74,7 @@ walk _ _ c = applyFriction c
   applyFriction :: Character -> Character
   applyFriction c | c.dx == 0.0 = c
   applyFriction c | abs c.dx <= friction c = c { dx = 0.0 }
-  applyFriction c | c.dx > 0.0 = c { dx = c.dx - friction c }
-  applyFriction c | c.dx < 0.0 = c { dx = c.dx + friction c }
+  applyFriction c = c { dx = c.dx + friction c }
 
 -- Mario can change his vertical acceleration when he is on the ground, proportional to his current speed
 jump :: Boolean -> Character -> Character
@@ -84,4 +83,4 @@ jump false c | isAirborne c && c.dy > 0.0 = c { dy = c.dy - gravity }
 jump _ c = c
 
 marioLogic :: { left :: Boolean, right :: Boolean, jump :: Boolean } -> Character -> Character
-marioLogic inputs = unsafePartial (velocity <<< applyGravity <<< walk inputs.left inputs.right <<< jump inputs.jump)
+marioLogic inputs = velocity <<< applyGravity <<< walk inputs.left inputs.right <<< jump inputs.jump
