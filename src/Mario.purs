@@ -3,9 +3,9 @@ module Mario where
 import Prelude ((<<<), (*), (+), (-), (==), (<), (>), (<=), (<>), (&&), not)
 import Control.Monad.Eff (Eff())
 import DOM.Node.Types (Node())
-import DOM(DOM())
+import DOM (DOM())
 import Math (abs, max, min)
-import Data.Ring(negate)
+import Data.Ring (negate)
 import Partial.Unsafe (unsafePartial)
 
 type Character = {
