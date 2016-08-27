@@ -1,7 +1,9 @@
 module Mario.Main (main) where
 
 import Control.Monad.Eff (Eff())
-import Prelude ((<$>), (<*>), bind, return, unit, Unit())
+import Data.Ring(negate)
+import Control.Applicative (pure)
+import Prelude ((<$>), (<*>), bind, unit, Unit())
 import Signal (foldp, runSignal, sampleOn, Signal())
 import Signal.DOM (animationFrame, keyPressed)
 import Signal.Time (Time())
@@ -18,7 +20,7 @@ jumpKeyCode = 38
 initialState :: Eff _ GameState
 initialState = do
   marioNode <- getMarioNode
-  return {
+  pure {
     mario: {
       node: marioNode,
       x: -50.0,
@@ -32,7 +34,7 @@ initialState = do
 gameLogic :: { left :: Boolean, right :: Boolean, jump :: Boolean } -> Eff _ GameState -> Eff _ GameState
 gameLogic inputs gameState = do
   gs <- gameState
-  return (gs { mario = marioLogic inputs gs.mario })
+  pure (gs { mario = marioLogic inputs gs.mario })
 
 render :: Eff _ GameState -> Eff _ Unit
 render gameState = do

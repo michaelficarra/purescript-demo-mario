@@ -2,8 +2,11 @@ module Mario where
 
 import Prelude ((<<<), (*), (+), (-), (==), (<), (>), (<=), (<>), (&&), not)
 import Control.Monad.Eff (Eff())
-import DOM (DOM(), Node())
+import DOM.Node.Types (Node())
+import DOM(DOM())
 import Math (abs, max, min)
+import Data.Ring(negate)
+import Partial.Unsafe (unsafePartial)
 
 type Character = {
   node :: Node,
@@ -62,7 +65,7 @@ applyGravity c | c.y <= -c.dy = c { y = 0.0, dy = 0.0 }
 applyGravity c = c { dy = c.dy - gravity }
 
 -- Mario can move himself left/right with a fixed acceleration
-walk :: Boolean -> Boolean -> Character -> Character
+walk :: Partial => Boolean -> Boolean -> Character -> Character
 walk true false c = c { dx = max (-maxMoveSpeed) (c.dx - accel c), dir = Left }
 walk false true c = c { dx = min maxMoveSpeed (c.dx + accel c), dir = Right }
 walk _ _ c = applyFriction c
@@ -81,4 +84,4 @@ jump false c | isAirborne c && c.dy > 0.0 = c { dy = c.dy - gravity }
 jump _ c = c
 
 marioLogic :: { left :: Boolean, right :: Boolean, jump :: Boolean } -> Character -> Character
-marioLogic inputs = velocity <<< applyGravity <<< walk inputs.left inputs.right <<< jump inputs.jump
+marioLogic inputs = unsafePartial (velocity <<< applyGravity <<< walk inputs.left inputs.right <<< jump inputs.jump)
