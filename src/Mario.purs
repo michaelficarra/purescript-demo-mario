@@ -1,9 +1,12 @@
 module Mario where
 
-import Prelude ((<<<), (*), (+), (-), (==), (<), (>), (<=), (<>), (&&), not)
+import Prelude ((<<<), (*), (+), (-), (==), (<), (>), (>=), (<=), (<>), (&&), not)
 import Control.Monad.Eff (Eff())
-import DOM (DOM(), Node())
+import DOM.Node.Types (Node())
+import DOM (DOM())
 import Math (abs, max, min)
+import Data.Ring (negate)
+import Partial.Unsafe (unsafePartial)
 
 type Character = {
   node :: Node,
@@ -71,8 +74,8 @@ walk _ _ c = applyFriction c
   applyFriction :: Character -> Character
   applyFriction c | c.dx == 0.0 = c
   applyFriction c | abs c.dx <= friction c = c { dx = 0.0 }
-  applyFriction c | c.dx > 0.0 = c { dx = c.dx - friction c }
-  applyFriction c | c.dx < 0.0 = c { dx = c.dx + friction c }
+  applyFriction c | abs c.dx >= friction c = c { dx = 0.0 }
+  applyFriction c = c { dx = c.dx + friction c }
 
 -- Mario can change his vertical acceleration when he is on the ground, proportional to his current speed
 jump :: Boolean -> Character -> Character

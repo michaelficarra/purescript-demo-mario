@@ -20,11 +20,18 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-dom": "~0.1.2",
-    "purescript-foldable-traversable": "~0.4.0",
-    "purescript-math": "~0.2.0",
-    "purescript-random": "~0.2.0",
-    "purescript-signal": "michaelficarra/purescript-signal#GH-29"
+    "purescript-dom": "^1.0.0",
+    "purescript-foldable-traversable": "^1.0.0",
+    "purescript-math": "^1.0.0",
+    "purescript-random": "^1.0.0",
+    "purescript-signal": "purescript-signal#master"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "purescript-psci-support": "^1.0.0"
+  },
+  "resolutions": {
+    "purescript-dom": "^1.0.0",
+    "purescript-math": "^2.0.0",
+    "purescript-js-date": "^2.0.0"
+  }
 }

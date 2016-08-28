@@ -1,7 +1,8 @@
 module Mario.DOM where
 
 import Control.Monad.Eff (Eff())
-import DOM (DOM(), Node())
+import DOM.Node.Types (Node())
+import DOM(DOM())
 import Prelude ((<<<), (+), Unit())
 
 import Mario (charSpriteDescriptor, Character(), SpriteDescriptor())
