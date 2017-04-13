@@ -8,12 +8,11 @@ deps: bower_components
 doc: docs/README.md
 
 SRC = $(shell find src -name '*.purs' -type f | sort)
-FFI = $(shell find src -name '*.js' -type f | sort)
 
 NPM = $(shell command -v npm || { echo "npm not found."; exit 1; })
 PSC = $(shell command -v psc || { echo "PureScript compiler (psc) not found."; exit 1; })
-PSCDOCS = $(shell command -v psc-docs)
-PSCBUNDLE = $(shell command -v psc-bundle)
+PSCDOCS = $(shell command -v psc-docs || { echo "Purescript doc generator (psc-docs) not found."; exit 1; })
+PSCBUNDLE = $(shell command -v psc-bundle || { echo "Purescript bundler (psc-bundle) not found."; exit 1; })
 
 NPM_BIN = $(shell npm bin)
 BOWER = $(NPM_BIN)/bower
@@ -25,9 +24,7 @@ dist/$(MODULE).js: bower_components $(SRC) $(FFI)
 	mkdir -p "$(@D)"
 	$(PSC) \
 		'bower_components/purescript-*/src/**/*.purs' \
-		--ffi 'bower_components/purescript-*/src/**/*.js' \
 		$(SRC) \
-		$(FFI:%=--ffi %) \
 		--verbose-errors
 	$(PSCBUNDLE) \
 		'output/**/*.js' \

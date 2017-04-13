@@ -1,24 +1,29 @@
 module Mario.Main (main) where
 
-import Control.Monad.Eff (Eff())
-import Prelude ((<$>), (<*>), bind, return, unit, Unit())
-import Signal (foldp, runSignal, sampleOn, Signal())
-import Signal.DOM (animationFrame, keyPressed)
-import Signal.Time (Time())
-
-import Mario (charSpriteDescriptor, marioLogic, Character(), Direction(Left, Right), SpriteDescriptor())
+import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Timer (TIMER)
+import DOM (DOM)
+import Mario (marioLogic, Character, Direction(..))
 import Mario.DOM (getMarioNode, onDOMContentLoaded, updatePosition, updateSprite)
+import Prelude (Unit, bind, discard, negate, pure, (<$>), (<*>))
+import Signal (foldp, runSignal, sampleOn)
+import Signal.DOM (animationFrame, keyPressed)
 
 type GameState = { mario :: Character }
 
+leftKeyCode :: Int
 leftKeyCode = 37
+
+rightKeyCode :: Int
 rightKeyCode = 39
+
+jumpKeyCode :: Int
 jumpKeyCode = 38
 
-initialState :: Eff _ GameState
+initialState :: forall eff. Eff (dom :: DOM | eff) GameState
 initialState = do
   marioNode <- getMarioNode
-  return {
+  pure {
     mario: {
       node: marioNode,
       x: -50.0,
@@ -29,18 +34,18 @@ initialState = do
     }
   }
 
-gameLogic :: { left :: Boolean, right :: Boolean, jump :: Boolean } -> Eff _ GameState -> Eff _ GameState
+gameLogic :: forall eff. { left :: Boolean, right :: Boolean, jump :: Boolean } -> Eff (dom :: DOM | eff) GameState -> Eff (dom :: DOM | eff) GameState
 gameLogic inputs gameState = do
   gs <- gameState
-  return (gs { mario = marioLogic inputs gs.mario })
+  pure (gs { mario = marioLogic inputs gs.mario })
 
-render :: Eff _ GameState -> Eff _ Unit
+render :: forall eff. Eff (dom :: DOM | eff) GameState -> Eff (dom :: DOM | eff) Unit
 render gameState = do
   gs <- gameState
   updatePosition gs.mario
   updateSprite gs.mario
 
-main :: Eff _ Unit
+main :: forall eff. Eff (timer :: TIMER | eff) Unit
 main = onDOMContentLoaded do
   frames <- animationFrame
   leftInputs <- keyPressed leftKeyCode
