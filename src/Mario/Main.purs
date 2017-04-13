@@ -1,14 +1,13 @@
 module Mario.Main (main) where
 
-import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Timer (TIMER)
 import DOM (DOM)
-import Signal (foldp, runSignal, sampleOn)
-import Signal.DOM (animationFrame, keyPressed)
-
 import Mario (marioLogic, Character, Direction(..))
 import Mario.DOM (getMarioNode, onDOMContentLoaded, updatePosition, updateSprite)
+import Prelude (Unit, bind, discard, negate, pure, (<$>), (<*>))
+import Signal (foldp, runSignal, sampleOn)
+import Signal.DOM (animationFrame, keyPressed)
 
 type GameState = { mario :: Character }
 

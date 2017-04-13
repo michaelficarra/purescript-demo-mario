@@ -1,8 +1,8 @@
 module Mario where
 
-import Prelude
 import DOM.Node.Types (Node)
 import Math (abs)
+import Prelude (max, min, negate, not, otherwise, (&&), (*), (+), (-), (<<<), (<=), (<>), (==), (>))
 
 type Character = {
   node :: Node,
