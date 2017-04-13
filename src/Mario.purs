@@ -1,10 +1,8 @@
 module Mario where
 
-import Prelude ((<<<), (*), (+), (-), (==), (<), (>), (<=), (<>), (&&), not, negate, otherwise)
-import Control.Monad.Eff (Eff)
-import DOM (DOM)
+import Prelude
 import DOM.Node.Types (Node)
-import Math (abs, max, min)
+import Math (abs)
 
 type Character = {
   node :: Node,
@@ -18,13 +16,28 @@ data Direction = Left | Right
 type SpriteDescriptor = String
 data Activity = Walking | Standing | Jumping
 
+gravity :: Number
 gravity = 0.15 -- px / frame^2
+
+maxMoveSpeed :: Number
 maxMoveSpeed = 2.5 -- px / frame
+
+groundAccel :: Number
 groundAccel = 0.06 -- px / frame^2
+
+airAccel :: Number
 airAccel = 0.04 -- px / frame^2
+
+groundFriction :: Number
 groundFriction = 0.1 -- px / frame^2
+
+airFriction :: Number
 airFriction = 0.02 -- px / frame^2
+
+jumpCoefficient :: Number
 jumpCoefficient = 0.8 -- px / frame^3
+
+minJumpSpeed :: Number
 minJumpSpeed = 4.0 -- px / frame
 
 charSpriteDescriptor :: Character -> SpriteDescriptor
@@ -40,8 +53,8 @@ charSpriteDescriptor c = "character " <> activityDesc (currentActivity c) <> " "
   dirDesc Right = "right"
 
   currentActivity :: Character -> Activity
-  currentActivity c | isAirborne c = Jumping
-  currentActivity c | c.dx == 0.0 = Standing
+  currentActivity c' | isAirborne c' = Jumping
+  currentActivity c' | c'.dx == 0.0 = Standing
   currentActivity _ = Walking
 
 isAirborne :: Character -> Boolean
@@ -70,11 +83,11 @@ walk _ _ c = applyFriction c
   where
   -- Mario slows down when he is not attempting to move himself
   applyFriction :: Character -> Character
-  applyFriction c
-    | c.dx == 0.0 = c
-    | abs c.dx <= friction c = c { dx = 0.0 }
-    | c.dx > 0.0 = c { dx = c.dx - friction c }
-    | otherwise  = c { dx = c.dx + friction c }
+  applyFriction c'
+    | c'.dx == 0.0 = c'
+    | abs c'.dx <= friction c' = c' { dx = 0.0 }
+    | c'.dx > 0.0 = c' { dx = c'.dx - friction c' }
+    | otherwise  = c' { dx = c'.dx + friction c' }
 
 -- Mario can change his vertical acceleration when he is on the ground, proportional to his current speed
 jump :: Boolean -> Character -> Character
