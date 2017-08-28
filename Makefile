@@ -10,9 +10,7 @@ doc: docs/README.md
 SRC = $(shell find src -name '*.purs' -type f | sort)
 
 NPM = $(shell command -v npm || { echo "npm not found."; exit 1; })
-PSC = $(shell command -v psc || { echo "PureScript compiler (psc) not found."; exit 1; })
-PSCDOCS = $(shell command -v psc-docs || { echo "Purescript doc generator (psc-docs) not found."; exit 1; })
-PSCBUNDLE = $(shell command -v psc-bundle || { echo "Purescript bundler (psc-bundle) not found."; exit 1; })
+PURS = $(shell command -v purs || { echo "PureScript compiler (purs) not found."; exit 1; })
 
 NPM_BIN = $(shell npm bin)
 BOWER = $(NPM_BIN)/bower
@@ -22,11 +20,11 @@ $(BOWER):
 
 dist/$(MODULE).js: bower_components $(SRC) $(FFI)
 	mkdir -p "$(@D)"
-	$(PSC) \
+	$(PURS) compile \
 		'bower_components/purescript-*/src/**/*.purs' \
 		$(SRC) \
 		--verbose-errors
-	$(PSCBUNDLE) \
+	$(PURS) bundle \
 		'output/**/*.js' \
 		--output dist/$(MODULE).js \
 		--module $(MODULE).Main \
@@ -36,7 +34,7 @@ dist/$(MODULE).js: bower_components $(SRC) $(FFI)
 
 docs/README.md: bower_components $(SRC)
 	mkdir -p '$(@D)'
-	$(PSCDOCS) \
+	$(PURS) docs \
 		--docgen $(MODULE) \
 		'bower_components/purescript-*/src/**/*.purs'
 		$(SRC) >'$@'
@@ -46,7 +44,7 @@ node_modules:
 	touch -cm node_modules
 
 bower_components: $(BOWER)
-	$(BOWER) install
+	"$(BOWER)" install
 	touch -cm bower_components
 
 clean:
