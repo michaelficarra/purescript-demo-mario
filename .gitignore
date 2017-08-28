@@ -2,7 +2,6 @@
 bower_components
 built-tests
 coverage
-docs
 dist
 output
 node_modules

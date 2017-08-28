@@ -15,10 +15,10 @@ NPM_BIN = $(shell npm bin)
 BOWER = $(NPM_BIN)/bower
 PURS = $(NPM_BIN)/purs
 
-$(BOWER):
-	npm install bower
+$(PURS): node_modules
+$(BOWER): node_modules
 
-dist/$(MODULE).js: bower_components $(SRC) $(FFI)
+dist/$(MODULE).js: bower_components $(PURS) $(SRC)
 	mkdir -p "$(@D)"
 	"$(PURS)" compile \
 		'bower_components/purescript-*/src/**/*.purs' \
@@ -32,11 +32,11 @@ dist/$(MODULE).js: bower_components $(SRC) $(FFI)
 
 .PHONY: default all build deps doc clean
 
-docs/README.md: bower_components $(SRC)
+docs/README.md: bower_components $(PURS) $(SRC)
 	mkdir -p '$(@D)'
 	"$(PURS)" docs \
 		--docgen $(MODULE) \
-		'bower_components/purescript-*/src/**/*.purs'
+		'bower_components/purescript-*/src/**/*.purs' \
 		$(SRC) >'$@'
 
 node_modules:
@@ -48,4 +48,4 @@ bower_components: $(BOWER)
 	touch -cm bower_components
 
 clean:
-	rm -rf dist bower_components node_modules .psci_modules output
+	rm -rf dist docs bower_components node_modules .psci_modules output
